@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/BaronPenteract/movies-explorer-api/issues"
   },
-  "homepage": "https://github.com/BaronPenteract/movies-explorer-api#readme",
+  "homepage": "https://github.com/BaronPenteract/movies-explorer-api",
   "devDependencies": {
     "eslint": "^8.38.0",
     "eslint-config-airbnb-base": "^15.0.0",

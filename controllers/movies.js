@@ -5,7 +5,7 @@ const {
 const Movie = require('../models/movie');
 
 module.exports.createMovie = (req, res, next) => {
-  const movie = req.body;
+  const movieData = req.body;
   /* const {
     country,
     director,
@@ -20,7 +20,7 @@ module.exports.createMovie = (req, res, next) => {
     nameEN, } = movie; */
   const { user } = req;
 
-  Movie.create({ ...movie, owner: user._id })
+  Movie.create({ ...movieData, owner: user._id })
     .then((movie) => movie.populate('owner'))
     .then((movie) => res.send(movie))
     .catch((err) => {
@@ -55,7 +55,7 @@ module.exports.deleteMovie = (req, res, next) => {
         return next(new ForbiddenError('Вы не являетесь владельцем.'));
       }
 
-      return movie.deleteOne().then(() => res.send({ message: `Фильм удален.` })).catch(() => {
+      return movie.deleteOne().then(() => res.send({ message: 'Фильм удален.' })).catch(() => {
         next(new InternalServerError('Что-то пошло не так.'));
       });
     })
