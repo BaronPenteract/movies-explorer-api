@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const { URL_REGEXP } = require('../utils/constants');
 
+const validatorURLObj = {
+  validator: (url) => URL_REGEXP.test(url),
+  message: ({ VALUE }) => `${VALUE} не является действительным URL`,
+};
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -26,26 +31,17 @@ const movieSchema = new mongoose.Schema({
   image: {
     type: String,
     required: [true, 'Поле обязательное'],
-    validate: {
-      validator: (url) => URL_REGEXP.test(url),
-      message: ({ VALUE }) => `${VALUE} не является действительным URL`,
-    },
+    validate: validatorURLObj,
   },
   trailerLink: {
     type: String,
     required: [true, 'Поле обязательное'],
-    validate: {
-      validator: (url) => URL_REGEXP.test(url),
-      message: ({ VALUE }) => `${VALUE} не является действительным URL`,
-    },
+    validate: validatorURLObj,
   },
   thumbnail: {
     type: String,
     required: [true, 'Поле обязательное'],
-    validate: {
-      validator: (url) => URL_REGEXP.test(url),
-      message: ({ VALUE }) => `${VALUE} не является действительным URL`,
-    },
+    validate: validatorURLObj,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

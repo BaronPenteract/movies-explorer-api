@@ -1,5 +1,5 @@
 const {
-  BadRequestError, NotFoundError, ForbiddenError, InternalServerError,
+  BadRequestError, NotFoundError, ForbiddenError, InternalServerError, errorMessages,
 } = require('../utils/errors');
 
 const Movie = require('../models/movie');
@@ -25,19 +25,24 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError('Некорректные данные.'));
+        next(new BadRequestError(errorMessages.BadRequest));
       } else {
-        next(new InternalServerError('Что-то пошло не так.'));
+        next(new InternalServerError(errorMessages.InternalServer));
       }
     });
 };
 
 module.exports.getMovies = (req, res, next) => {
+  const { user } = req;
+
   Movie.find({})
     .populate('owner')
-    .then((movies) => res.send(movies))
+    .then((movies) => {
+      const resData = movies.filter((movie) => movie.owner._id.toString() === user._id.toString());
+      res.send(resData);
+    })
     .catch(() => {
-      next(new InternalServerError('Что-то пошло не так.'));
+      next(new InternalServerError(errorMessages.InternalServer));
     });
 };
 
@@ -48,22 +53,22 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(movieId)
     .then((movie) => {
       if (!movie) {
-        return next(new NotFoundError('Фильм с таким id не найден.'));
+        return next(new NotFoundError(errorMessages.NotFound));
       }
 
       if (movie.owner._id.toString() !== user._id.toString()) {
-        return next(new ForbiddenError('Вы не являетесь владельцем.'));
+        return next(new ForbiddenError(errorMessages.Forbidden));
       }
 
       return movie.deleteOne().then(() => res.send({ message: 'Фильм удален.' })).catch(() => {
-        next(new InternalServerError('Что-то пошло не так.'));
+        next(new InternalServerError(errorMessages.InternalServer));
       });
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError('Некорректные данные.'));
+        next(new BadRequestError(errorMessages.BadRequest));
       } else {
-        next(new InternalServerError('Что-то пошло не так.'));
+        next(new InternalServerError(errorMessages.InternalServer));
       }
     });
 };

@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    default: 'Ваше имя?',
     required: true,
     minlength: [2, 'Слишком короткое значение'],
     maxlength: [30, 'Слишком длинное значение'],

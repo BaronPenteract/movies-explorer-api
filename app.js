@@ -18,23 +18,24 @@ const {
   loginValidation, registerValidation,
 } = require('./middlewares/validation');
 
-const { NotFoundError } = require('./utils/errors');
+const { DB_URL } = require('./utils/mongoDBConfig');
+const { NotFoundError, errorMessages } = require('./utils/errors');
 
-const routerUsers = require('./routes/users');
-const routerMovies = require('./routes/movies');
+const routes = require('./routes');
 
-const { PORT = 3000, DB = 'bitfilmsdb' } = process.env;
+const { PORT = 3000, DB = DB_URL } = process.env;
 const app = express();
 
 app.use(express.json());
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${DB}`);
+mongoose.connect(DB);
+
+app.use(requestLogger);
 
 // Apply the rate limiting middleware to all requests
 app.use(rateLimiter);
 app.use(helmet());
 
-app.use(requestLogger);
 app.use(cors);
 
 app.post(
@@ -49,16 +50,15 @@ app.post(
   createUser,
 );
 
-app.use('/movies', auth, routerMovies);
-app.use('/users', auth, routerUsers);
-
-app.use(errorLogger);
+app.use('/', auth, routes);
 
 app.use(errors());
 
 app.use(auth, (req, res, next) => {
-  next(new NotFoundError('Некорректный запрос'));
+  next(new NotFoundError(errorMessages.NotFound));
 });
+
+app.use(errorLogger);
 
 app.use(errorHandler);
 

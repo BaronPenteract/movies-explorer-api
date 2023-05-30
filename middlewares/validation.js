@@ -21,18 +21,18 @@ const registerValidation = celebrate({
 
 const movieValidation = celebrate({
   [Segments.BODY]: Joi.object().keys({
-    country: Joi.string().min(2).required(),
-    director: Joi.string().min(2).max(30).required(),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
     duration: Joi.number().required(),
-    year: Joi.string().length(4).required(),
+    year: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string().regex(URL_REGEXP).required(),
     trailerLink: Joi.string().regex(URL_REGEXP).required(),
     thumbnail: Joi.string().regex(URL_REGEXP).required(),
     /* owner: Joi.string().hex().length(24), */
     movieId: Joi.number().required(),
-    nameRU: Joi.string().min(1).required(),
-    nameEN: Joi.string().min(1).required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
